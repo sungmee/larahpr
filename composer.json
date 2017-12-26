@@ -1,0 +1,16 @@
+{
+    "name": "sungmee/larahpr",
+    "description": "Useful Methods, Functions for Laravel.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0.0",
+        "illuminate/support": ">=4.0",
+        "nesbot/carbon": "~1.20"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sungmee\\Larahpr\\": "src/"
+        }
+    }
+}
