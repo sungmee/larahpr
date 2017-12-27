@@ -2,9 +2,9 @@
 
 namespace Sungmee\Larahpr;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as ServiceProviderParent;
 
-class LarahprServiceProvider extends ServiceProvider
+class ServiceProvider extends ServiceProviderParent
 {
     /**
      * @var bool
@@ -19,7 +19,7 @@ class LarahprServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/config/larahpr.php', 'larahpr'
+            __DIR__.'/config.php', 'sungmee'
         );
     }
 

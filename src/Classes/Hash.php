@@ -5,6 +5,13 @@ namespace Sungmee\Larahpr\Classes;
 class Hash
 {
     /**
+     * 配置
+     *
+     * @var array
+     */
+    protected $conf;
+
+    /**
      * 加密后字符串长度
      *
      * @var integer
@@ -57,10 +64,11 @@ class Hash
      */
     public function __construct()
     {
-        $config             = config('larahpr');
-        $this->length       = $config ? $config['length'] : 8;
-        $this->salt         = $config ? $config['salt'] : 3.14159265359;
-        $this->dictionary   = $config ? $config['dictionary']
+        $conf               = config('sungmee.hashid');
+        $this->conf         = $conf;
+        $this->length       = $conf ? $conf['length'] : 8;
+        $this->salt         = $conf ? $conf['salt'] : 3.14159265359;
+        $this->dictionary   = $conf ? $conf['dictionary']
                 : 'FH2h7v0VOL5NtZzaCnMwmUYsrykl81TiQEoDxI6feuAgdJGcj39BqRW4PpSKbX';
         $this->flag         = substr($this->dictionary, 0, $this->length);
         $this->substitute   = substr($this->dictionary, $this->length, 10);
@@ -74,7 +82,7 @@ class Hash
      * @param  integer $ids 需要加密的 ID 值
      * @return string
      */
-    public function hash(int $ids)
+    public function id2hash(int $ids)
     {
         $hash       = '';
         $ids_length = strlen($ids);
@@ -108,7 +116,7 @@ class Hash
      * @param  string  $hash 需要解密的 Hash 值
      * @return integer
      */
-    public function id(string $hash)
+    public function hash2id(string $hash)
     {
         $ids       = '';
         $first     = substr($hash, 0, 1);
@@ -149,7 +157,7 @@ class Hash
     public function str2hash(string $string)
     {
         $string = urlencode($string);
-        $key    = config('larahpr.decodePwKey');
+        $key    = $this->conf['strHashKey'];
         $len    = strlen($key);
         $hash   = '';
         for($i = 0; $i < strlen ($string); $i++) {

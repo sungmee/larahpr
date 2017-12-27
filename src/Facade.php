@@ -2,9 +2,9 @@
 
 namespace Sungmee\Larahpr;
 
-use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Facade as FacadeParent;
 
-class LarahprFacade extends Facade {
+class Facade extends FacadeParent {
     /**
      * @return string
      */

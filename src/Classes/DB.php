@@ -20,7 +20,7 @@ class DB
      */
     public function __construct()
     {
-		$this->conf = config('larahpr');
+		$this->conf = config('sungmee');
     }
 
     /**
