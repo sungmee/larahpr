@@ -18,9 +18,9 @@ class LarahprServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mergeConfigFrom(
-            __DIR__.'/config/larahpr.php', 'larahpr'
-        );
+        // $this->mergeConfigFrom(
+        //     __DIR__.'/config/larahpr.php', 'larahpr'
+        // );
     }
 
     /**
