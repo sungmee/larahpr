@@ -1,6 +1,6 @@
 <?php
 
-namespace Sungmee\Larahpr;
+namespace Sungmee\Larahpr\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
