@@ -18,9 +18,9 @@ class LarahprServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->mergeConfigFrom(
-        //     __DIR__.'/config/larahpr.php', 'larahpr'
-        // );
+        $this->mergeConfigFrom(
+            __DIR__.'/config/larahpr.php', 'larahpr'
+        );
     }
 
     /**
@@ -30,7 +30,7 @@ class LarahprServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('HP', function () {
+        $this->app->singleton('HPR', function () {
             return new Helper;
         });
     }
@@ -40,6 +40,6 @@ class LarahprServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['HP'];
+        return ['HPR'];
     }
 }

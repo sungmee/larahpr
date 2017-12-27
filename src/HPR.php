@@ -2,7 +2,7 @@
 
 namespace Sungmee\Larahpr;
 
-class Helper
+class HPR
 {
 	/**
      * 创建一个新实例。
