@@ -16,7 +16,7 @@ class HPR
 
     public function __call(string $name, $args = null) {
         $class = strlen($name) <= 2 ? strtoupper($name) : studly_case($name);
-        $class = "Sungmee\\Larahpr\\Classes\\$class";
+        $class = "Sungmee\\Larahpr\\Helpers\\$class";
         return new $class($args);
     }
 

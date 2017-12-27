@@ -1,6 +1,6 @@
 <?php
 
-namespace Sungmee\Larahpr\Classes;
+namespace Sungmee\Larahpr\Helpers;
 
 use Illuminate\Support\Facades\Cache;
 

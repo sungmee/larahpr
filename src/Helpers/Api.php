@@ -27,7 +27,7 @@
  *
  */
 
-namespace Sungmee\Larahpr\Classes;
+namespace Sungmee\Larahpr\Helpers;
 
 use Illuminate\Http\Request;
 
