@@ -3,9 +3,9 @@
 namespace Sungmee\Larahpr\Classes;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache as C;
+use Illuminate\Support\Facades\Cache;
 
-class Cache
+class CC
 {
 	/**
      * 创建一个新实例。
@@ -49,7 +49,7 @@ class Cache
      */
     public function cacheGet(array $keys)
     {
-        return C::tags($keys['tags'])->get($keys['key']);
+        return Cache::tags($keys['tags'])->get($keys['key']);
     }
 
     /**
@@ -67,6 +67,6 @@ class Cache
         $end = $end ? Carbon::parse($end, $tzn) : null;
         $tod = empty($end) || Carbon::today($tzn)->diffInDays($end) == 0;
         $exp = $tod ? $minutes : Carbon::now($tzn)->addDays(7);
-        return C::tags($keys['tags'])->put($keys['key'], $data, $exp);
+        return Cache::tags($keys['tags'])->put($keys['key'], $data, $exp);
     }
 }
