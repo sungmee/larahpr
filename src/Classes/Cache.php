@@ -3,9 +3,9 @@
 namespace Sungmee\Larahpr\Classes;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cache as C;
 
-class CC
+class Cache
 {
 	/**
      * 创建一个新实例。
@@ -23,7 +23,7 @@ class CC
      * @param   string  $affix  附加的缓存键
      * @return  array   $keys   ['tags' => [], 'key' => 'string']
      */
-    public function cacheKeys(string $affix = '')
+    public function key(string $affix = '')
     {
         $trac = debug_backtrace()[1];
         $tags = [$trac['class'], $trac['function']];
@@ -47,9 +47,9 @@ class CC
      * @param   array   $keys   缓存的标签和键的数组 ['tags' => [], 'key' => 'string']
      * @return  Cache
      */
-    public function cacheGet(array $keys)
+    public function get(array $keys)
     {
-        return Cache::tags($keys['tags'])->get($keys['key']);
+        return C::tags($keys['tags'])->get($keys['key']);
     }
 
     /**
@@ -61,12 +61,12 @@ class CC
      * @param   int                 $minutes    默认缓存时间
      * @return  bool
      */
-    public function cachePut(array $keys, $data, string $end = null, int $minutes = 10)
+    public function put(array $keys, $data, string $end = null, int $minutes = 10)
     {
         $tzn = config('mt4.timezone');
         $end = $end ? Carbon::parse($end, $tzn) : null;
         $tod = empty($end) || Carbon::today($tzn)->diffInDays($end) == 0;
         $exp = $tod ? $minutes : Carbon::now($tzn)->addDays(7);
-        return Cache::tags($keys['tags'])->put($keys['key'], $data, $exp);
+        return C::tags($keys['tags'])->put($keys['key'], $data, $exp);
     }
 }

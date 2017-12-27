@@ -157,5 +157,23 @@ class Hash
             $hash .= $string [$i] ^ $key [$k];
         }
         return urlencode(base64_encode($hash));
-	}
+    }
+
+    /**
+     * 根据指定字符串，或随机字符串生成 UUID
+     *
+     * @param string    $chars  需要指定的字符串
+     * @return string   $uuid   UUID
+     */
+    public function uuid(string $chars = null)
+    {
+        $chars = $chars ?: uniqid(mt_rand(), true);
+        $chars = md5($chars);
+        $uuid  = substr($chars,0,8) . '-';
+        $uuid .= substr($chars,8,4) . '-';
+        $uuid .= substr($chars,12,4) . '-';
+        $uuid .= substr($chars,16,4) . '-';
+        $uuid .= substr($chars,20,12);
+        return $uuid;
+    }
 }
