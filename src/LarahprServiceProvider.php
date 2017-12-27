@@ -31,7 +31,7 @@ class LarahprServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('HPR', function () {
-            return new Helper;
+            return new HPR;
         });
     }
 
