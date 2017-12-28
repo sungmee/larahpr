@@ -23,7 +23,7 @@ class Cache
      * @param   string  $affix  附加的缓存键
      * @return  array   $keys   ['tags' => [], 'key' => 'string']
      */
-    public function key(string $affix = '')
+    public function keys(string $affix = '')
     {
         $trac = debug_backtrace()[1];
         $tags = [$trac['class'], $trac['function']];
@@ -63,9 +63,9 @@ class Cache
      */
     public function put(array $keys, $data, string $end = null, int $minutes = 10)
     {
-        $tzn = config('mt4.timezone');
+        $tzn = config('sungmee.timezone');
         $end = $end ? Carbon::parse($end, $tzn) : null;
-        $tod = empty($end) || Carbon::today($tzn)->diffInDays($end) == 0;
+        $tod = empty($end) || Carbon::today($tzn)->diffInDays($end, false) >= 0;
         $exp = $tod ? $minutes : Carbon::now($tzn)->addDays(7);
         return C::tags($keys['tags'])->put($keys['key'], $data, $exp);
     }

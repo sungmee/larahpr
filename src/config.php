@@ -1,6 +1,7 @@
 <?php
 
 return [
+	'timezont' => config('mt4.timezone') ?: config('app.timezone'),
 	'db_start' => env('HPR_DB_START', 201711),
 
     'hashid' => [
