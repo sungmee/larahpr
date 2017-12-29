@@ -2,7 +2,9 @@
 
 namespace Sungmee\Larahpr\Helpers;
 
-class Hash
+use Sungmee\Larahpr\HPR;
+
+class Hash extends HPR
 {
     /**
      * 配置

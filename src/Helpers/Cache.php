@@ -3,9 +3,10 @@
 namespace Sungmee\Larahpr\Helpers;
 
 use Carbon\Carbon;
+use Sungmee\Larahpr\HPR;
 use Illuminate\Support\Facades\Cache as C;
 
-class Cache
+class Cache extends HPR
 {
 	/**
      * 创建一个新实例。

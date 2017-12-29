@@ -2,9 +2,10 @@
 
 namespace Sungmee\Larahpr\Helpers;
 
+use Sungmee\Larahpr\HPR;
 use Illuminate\Support\Facades\Cache;
 
-class FX
+class FX extends HPR
 {
 	/**
      * 创建一个新实例。

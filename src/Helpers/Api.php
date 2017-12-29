@@ -1,44 +1,54 @@
 <?php
-/**
- * API 相关的可复用代码块
- *
- * @copyright Copyright 2017, 海陆田园版权所有
- * @author SUNGMEE
- * @Date: 2017年12月13日
- * @Time: 18:00:00
- *
- * 状态说明
- *
- * 200 GET 请求成功，及 DELETE 或 PATCH 同步请求完成，或者 PUT 同步更新一个已存在的资源
- * 201 POST 同步请求完成，或者 PUT 同步创建一个新的资源
- * 202 POST，PUT，DELETE，或 PATCH 请求接收，将被异步处理
- * 204 无内容。当一个动作执行成功，但没有内容返回。
- * 206 GET 请求成功，但是只返回一部分，参考：上文中范围分页
-
- * 400 Bad request. 错误的请求。无法通过验证的请求的标准选项。
- * 401 Unauthorized. 未经授权。用户需要进行身份验证。
- * 403 Forbidden. 无权限。用户已通过身份验证，但没有执行操作的权限。
- * 404 Not found. 未找到。没有找到相关资源。
- * 422 Unprocessable Entity. 请求被服务器正确解析，但是包含无效字段
- * 429 Too Many Requests. 因为访问频繁，你已经被限制访问，稍后重试
-
- * 500 Internal Server Error: 服务器错误。
- * 503 Service unavailable. 暂停服务。
- *
- */
 
 namespace Sungmee\Larahpr\Helpers;
 
+use Sungmee\Larahpr\HPR;
 use Illuminate\Http\Request;
 
-class Api
+class Api extends HPR
 {
     /**
      * 默认状态码
      *
      * @var int
      */
-    private $statusCode = 200;
+    protected $statusCode = 200;
+
+    /**
+     * 错误消息
+     *
+     * @var int
+     *
+    * 状态说明
+    *
+    * 200 GET 请求成功，及 DELETE 或 PATCH 同步请求完成，或者 PUT 同步更新一个已存在的资源
+    * 201 POST 同步请求完成，或者 PUT 同步创建一个新的资源
+    * 202 POST，PUT，DELETE，或 PATCH 请求接收，将被异步处理
+    * 204 无内容。当一个动作执行成功，但没有内容返回。
+    * 206 GET 请求成功，但是只返回一部分，参考：上文中范围分页
+
+    * 400 Bad request. 错误的请求。无法通过验证的请求的标准选项。
+    * 401 Unauthorized. 未经授权。用户需要进行身份验证。
+    * 403 Forbidden. 无权限。用户已通过身份验证，但没有执行操作的权限。
+    * 404 Not found. 未找到。没有找到相关资源。
+    * 422 Unprocessable Entity. 请求被服务器正确解析，但是包含无效字段
+    * 429 Too Many Requests. 因为访问频繁，你已经被限制访问，稍后重试
+
+    * 500 Internal Server Error: 服务器错误。
+    * 503 Service unavailable. 暂停服务。
+     */
+    protected $messages = [
+        200 => 'Success.',
+        204 => 'Ok',
+        400 => 'Bad Request.',              // 错误的请求。无法通过验证的请求的标准选项。
+        401 => 'Unauthorized.',             // 未经授权。用户需要进行身份验证。
+        403 => 'Forbidden.',                // 无权限。用户已通过身份验证，但没有执行操作的权限。
+        404 => 'Not Found.',                // 未找到。没有找到相关资源。
+        422 => 'Unprocessable Entity.',     // 请求被服务器正确解析，但是包含无效字段。
+        429 => 'Too Many Requests.',        // 因为访问频繁，你已经被限制访问，稍后重试。
+        500 => 'Internal Server Error.',    // 服务器错误。
+        503 => 'Service unavailable.'       // 暂停服务。
+    ];
 
 	/**
      * 创建一个新实例。
@@ -50,26 +60,16 @@ class Api
 		//
     }
 
-    /**
-     * 设置状态码，支持链式操作
-     *
-     * @param  int      $statusCode
-     * @return object   $this
-     */
-    public function setStatusCode(int $statusCode)
+    public function __call($name, $args)
     {
-        $this->statusCode = $statusCode;
-        return $this;
-    }
+        $field = preg_match('/^response(\d+)/', $name, $matches);
+        if ($field && $matches[1]) {
+            @$message = $args[0] ?: __($this->messages[$matches[1]]);
+            $statusCode = $matches[1];
+            return $this->error($message, $statusCode);
+        }
 
-    /**
-     * 获取状态码
-     *
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return $this->statusCode;
+        parent::__call($name, $args);
     }
 
     /**
@@ -89,18 +89,18 @@ class Api
      * @param  string $message
      * @return json   $this->response
      */
-    public function responseException($e)
+    public function exception($e)
     {
         $statusCode = $e->getCode();
         $message = $e->getMessage();
 
         $message = $statusCode < 100
             ? "[$statusCode] $message"
-            : $message ? $message : __('Service unavailable.');
+            : $message ?: __('Service unavailable.');
 
         $statusCode = $statusCode < 100 ? 500 : $statusCode;
 
-        return $this->responseError($message, $statusCode);
+        return $this->error($message, $statusCode);
     }
 
     /**
@@ -109,11 +109,11 @@ class Api
      * @param  string $message
      * @return json   $this->response
      */
-    public function responseError($message = null, $statusCode = 400, $errors = [])
+    public function error($message = null, $statusCode = 400, $errors = [])
     {
-        $message = $message ? $message : __('Bad Request.');
+        $message = $message ?: __('Bad Request.');
 
-        $this->setStatusCode($statusCode);
+        $this->statusCode = $statusCode;
 
         return $this->response([
             'errors'  => $errors,
@@ -122,91 +122,14 @@ class Api
     }
 
     /**
-     * 未经授权。用户需要进行身份验证。
-     *
-     * @return json $this->response
-     */
-    public function response401($message = null)
-    {
-        $message = $message ? $message : __('Unauthorized.');
-        return $this->responseError($message, 401);
-    }
-
-    /**
-     * 无权限。用户已通过身份验证，但没有执行操作的权限。
-     *
-     * @return json $response
-     */
-    public function response403($message = null)
-    {
-        $message = $message ? $message : __('Forbidden.');
-        return $this->responseError($message, 403);
-    }
-
-    /**
-     * 未找到。没有找到相关资源。
-     *
-     * @return json $response
-     */
-    public function response404($message = null)
-    {
-        $message = $message ? $message : __('Not Found.');
-        return $this->responseError($message, 404);
-    }
-
-    /**
-     * 请求被服务器正确解析，但是包含无效字段。
-     *
-     * @return json $response
-     */
-    public function response422($message = null)
-    {
-        $message = $message ? $message : __('Unprocessable Entity.');
-        return $this->responseError($message, 422);
-    }
-
-    /**
-     * 因为访问频繁，你已经被限制访问，稍后重试。
-     *
-     * @return json $response
-     */
-    public function response429($message = null)
-    {
-        $message = $message ? $message : __('Too Many Requests.');
-        return $this->responseError($message, 429);
-    }
-
-    /**
-     * 服务器错误。
-     *
-     * @return json $response
-     */
-    public function response500($message = null)
-    {
-        $message = $message ? $message : __('Internal Server Error.');
-        return $this->responseError($message, 500);
-    }
-
-    /**
-     * 暂停服务。
-     *
-     * @return json $response
-     */
-    public function response503($message = null)
-    {
-        $message = $message ? $message : __('Service unavailable.');
-        return $this->responseError($message, 503);
-    }
-
-    /**
      * 请求数据的成功响应
      *
      * @param  string $message [description]
      * @return json   $this->response
      */
-    public function responseSuccess($data, $message = null)
+    public function success($data, $message = null)
     {
-        $message = $message ? $message : __('Success.');
+        $message = $message ?: __('Success.');
 
         return $this->response([
             'data' => $data
@@ -218,9 +141,9 @@ class Api
      *
      * @return json   $this->response
      */
-    public function responseOk()
+    public function ok()
     {
-        $this->setStatusCode(204);
+        $this->statusCode = 204;
 
         return $this->response([
             'message' => 'Ok'
@@ -235,7 +158,7 @@ class Api
      */
     public function responsePaginate(Request $request, $data, $message = null)
     {
-        $message = $message ? $message : __('Success.');
+        $message = $message ?: __('Success.');
         $data = is_array($data) ? collect($data) : $data;
         $total = $data->count();
         $per_page = $request->per_page && is_numeric($request->per_page) ? (int) $request->per_page : 15;

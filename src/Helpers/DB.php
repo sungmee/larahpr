@@ -2,9 +2,10 @@
 
 namespace Sungmee\Larahpr\Helpers;
 
+use Sungmee\Larahpr\HPR;
 use Illuminate\Support\Facades\DB as D;
 
-class DB
+class DB extends HPR
 {
     /**
      * 配置
